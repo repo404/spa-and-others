@@ -1,0 +1,125 @@
+<html>
+	<head>
+		<title>TaTeTi</title>
+		<style>
+*{margin: 0px;}
+/*body{background-color: #000; color: #fff; font-family: monospace;display: flex; align-content: center; justify-content: center; height: 100vh;flex-wrap: wrap;margin:0% 25%;}*/
+body{background-color: #000; color: #fff; font-family: monospace;z-index: 100;}
+main{display: flex; align-content: center; justify-content: center; height: 100vh;flex-wrap: wrap;margin:0% 7%;}
+p,h2,table{flex: 1 1 100%;}
+h2{text-align: center; font-size: 30px;padding: 25px;}
+p{height: 25px;}
+#tj2{transform: rotate(180deg);}
+#tj1{}
+#mj2{transform: rotate(180deg); text-align: center;}
+#mj1{text-align: center;}
+table{width: 100%; height: 60%;}
+tr{height: 33%;}
+td{background-color:#333; border: 1px solid #333;width: 33%;height: 33%;text-align: center;font-weight: bold;font-size: 80px;border-radius: 15px;}
+td:hover{background-color: #633;}
+.turno{}
+#terminado{display: none;position: fixed;z-index: 1000;left: 0;top: 0;width: 100%;height: 100%;overflow: auto;background-color: rgba(0, 0, 0, 0.5);}
+#terminado button {background-color: #e4e4e4;color: #1e1e1e;font-size: 20px;margin: 10% auto;padding: 20px;border: 1px solid #888;border-radius: 10px;width: 80%;max-width: 500px;position: relative;animation: aparecer 0.3s ease;text-align: center;}
+
+		</style>
+	</head>
+	<body>
+
+		<main>
+			<p id="mj2"></p>
+			<h2 id="tj2">JUGADOR 2</h2>
+
+			<table>
+				<tr><td id=c0></td><td id=c1></td><td id=c2></td></tr>
+				<tr><td id=c3></td><td id=c4></td><td id=c5></td></tr>
+				<tr><td id=c6></td><td id=c7></td><td id=c8></td></tr>
+			</table>
+
+			<h2 id="tj1">JUGADOR 1</h2>
+			<p id="mj1"></p>
+
+		</main>
+		<div id="terminado"></div>
+	</body>
+	<script>
+// Inicio del juego
+
+let a = document.getElementById("c0");
+let b = document.getElementById("c1");
+let c = document.getElementById("c2");
+let d = document.getElementById("c3");
+let e = document.getElementById("c4");
+let f = document.getElementById("c5");
+let g = document.getElementById("c6");
+let h = document.getElementById("c7");
+let i = document.getElementById("c8");
+let mj2 = document.getElementById("mj2");
+let mj1 = document.getElementById("mj1");
+let fin = document.getElementById("terminado");
+mj1.innerHTML = 'COMENZA VOS';
+
+let ganador = [[0,1,2],[0,3,6],[0,4,8],[1,4,7],[2,5,8],[2,4,6],[3,4,5],[6,7,8]];
+let j1 = [];
+let j2 = [];
+let turno = 0;
+
+function terminado(f,gg){
+	if(gg=='0'){
+		f.innerHTML = '<button onclick="location.reload();">Empate</button>';
+		f.style.display = 'block';
+	}else{
+		f.innerHTML = '<button onclick="location.reload();">Ganador Jugador ' + gg +'</button>';
+		f.style.display = 'block';
+	}
+};
+
+
+
+function juego(t,j1,j2,jugada,g){
+
+	let j = '';
+	let gana = false;
+
+	if(t==0){
+		turno = 1;
+		j1.push(jugada);
+		j='x';
+		for(let cont = 0; cont < g.length; cont++){
+			gana = g[cont].every(elemento=>j1.includes(elemento));
+			if(gana==true){
+				terminado(fin,'1');
+				return j;
+			};
+		};
+		mj1.innerHTML = '';
+		mj2.innerHTML = 'TU TURNO';
+	}else{
+		turno = 0;
+		j2.push(jugada);
+		j='o';
+		for(let cont = 0; cont < g.length; cont++){
+			gana = g[cont].every(elemento=>j2.includes(elemento));
+			if(gana==true){
+				terminado(fin,'2');
+				return j;
+			};
+		};
+		mj1.innerHTML = 'TU TURNO';
+		mj2.innerHTML = '';
+	};
+	if(j1.length == 5){terminado(fin,'0')};
+	return j;
+};
+
+a.addEventListener("click",function(){a.innerHTML = juego(turno,j1,j2,0,ganador);},{once : true});
+b.addEventListener("click",function(){b.innerHTML = juego(turno,j1,j2,1,ganador);},{once : true});
+c.addEventListener("click",function(){c.innerHTML = juego(turno,j1,j2,2,ganador);},{once : true});
+d.addEventListener("click",function(){d.innerHTML = juego(turno,j1,j2,3,ganador);},{once : true});
+e.addEventListener("click",function(){e.innerHTML = juego(turno,j1,j2,4,ganador);},{once : true});
+f.addEventListener("click",function(){f.innerHTML = juego(turno,j1,j2,5,ganador);},{once : true});
+g.addEventListener("click",function(){g.innerHTML = juego(turno,j1,j2,6,ganador);},{once : true});
+h.addEventListener("click",function(){h.innerHTML = juego(turno,j1,j2,7,ganador);},{once : true});
+i.addEventListener("click",function(){i.innerHTML = juego(turno,j1,j2,8,ganador);},{once : true});
+	</script>
+
+</html>
