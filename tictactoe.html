@@ -1,6 +1,6 @@
 <html>
 	<head>
-		<title>TaTeTi</title>
+		<title>TicTacToe</title>
 		<style>
 *{margin: 0px;}
 /*body{background-color: #000; color: #fff; font-family: monospace;display: flex; align-content: center; justify-content: center; height: 100vh;flex-wrap: wrap;margin:0% 25%;}*/
@@ -35,7 +35,7 @@ td:hover{background-color: #633;}
 				<tr><td id=c6></td><td id=c7></td><td id=c8></td></tr>
 			</table>
 
-			<h2 id="tj1">JUGADOR 1</h2>
+			<h2 id="tj1">Player 1</h2>
 			<p id="mj1"></p>
 
 		</main>
@@ -56,7 +56,7 @@ let i = document.getElementById("c8");
 let mj2 = document.getElementById("mj2");
 let mj1 = document.getElementById("mj1");
 let fin = document.getElementById("terminado");
-mj1.innerHTML = 'COMENZA VOS';
+mj1.innerHTML = 'YOU START';
 
 let ganador = [[0,1,2],[0,3,6],[0,4,8],[1,4,7],[2,5,8],[2,4,6],[3,4,5],[6,7,8]];
 let j1 = [];
@@ -65,10 +65,10 @@ let turno = 0;
 
 function terminado(f,gg){
 	if(gg=='0'){
-		f.innerHTML = '<button onclick="location.reload();">Empate</button>';
+		f.innerHTML = '<button onclick="location.reload();">Draw</button>';
 		f.style.display = 'block';
 	}else{
-		f.innerHTML = '<button onclick="location.reload();">Ganador Jugador ' + gg +'</button>';
+		f.innerHTML = '<button onclick="location.reload();">Player ' + gg +' WIN</button>';
 		f.style.display = 'block';
 	}
 };
@@ -92,7 +92,7 @@ function juego(t,j1,j2,jugada,g){
 			};
 		};
 		mj1.innerHTML = '';
-		mj2.innerHTML = 'TU TURNO';
+		mj2.innerHTML = 'Your Turn';
 	}else{
 		turno = 0;
 		j2.push(jugada);
@@ -104,7 +104,7 @@ function juego(t,j1,j2,jugada,g){
 				return j;
 			};
 		};
-		mj1.innerHTML = 'TU TURNO';
+		mj1.innerHTML = 'Your Turn';
 		mj2.innerHTML = '';
 	};
 	if(j1.length == 5){terminado(fin,'0')};
