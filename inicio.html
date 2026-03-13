@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pendientes</title>
+    <style>
+        /* Tema oscuro */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #181a1b;
+            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            padding: 50px;
+        }
+        .container {
+            background: #23272f;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 400px;
+        }
+        h2 {
+            color: #e0e0e0;
+            margin-top: 0;
+        }
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        input {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #444;
+            border-radius: 6px;
+            outline: none;
+            background: #181a1b;
+            color: #e0e0e0;
+        }
+        input:focus {
+            border-color: #00bfff;
+        }
+        button {
+            padding: 10px 15px;
+            background: #23272f;
+            color: #e0e0e0;
+            border: 2px solid #444;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s;
+        }
+        button:hover {
+            background: #2d313a;
+            border-color: #00bfff;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            background: #23272f;
+            border-bottom: 1px solid #333;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .delete-btn {
+            color: #ff4d4d;
+            cursor: pointer;
+            font-weight: bold;
+            border: none;
+            background: none;
+        }
+        .copy-btn {
+            color: #00bfff;
+            background: none;
+            border: none;
+            font-size: 1.1em;
+            cursor: pointer;
+        }
+        #clearBtn {
+            background: #ff4d4d;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 12px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 30px;
+            width: 100%;
+            transition: background 0.2s;
+        }
+        #clearBtn:hover {
+            background: #b30000;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Tareas Pendientes</h2>
+    <div class="input-group">
+        <input type="text" id="todoInput" placeholder="Tarea nueva...">
+        <button onclick="addTask()">Añadir</button>
+    </div>
+    <ul id="todoList"></ul>
+    <button id="clearBtn" style="margin-top: 30px; width: 100%; background: #ff4d4d; color: white; border: none; border-radius: 6px; padding: 12px; font-size: 1rem; cursor: pointer;" onclick="clearTasks()">Limpiar todas las tareas</button>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+    const input = document.getElementById('todoInput');
+    const list = document.getElementById('todoList');
+
+    // Cargar datos al iniciar
+    document.addEventListener('DOMContentLoaded', loadTasks);
+
+    function addTask() {
+        const text = input.value.trim();
+        if (!text) return;
+
+        const taskObj = { id: Date.now(), text: text };
+        renderTask(taskObj);
+        saveTask(taskObj);
+        input.value = '';
+    }
+
+    function renderTask(task) {
+        const li = document.createElement('li');
+        li.dataset.id = task.id;
+        li.innerHTML = `
+            <span class="bullet" style="margin-right: 8px; font-size: 1.2em; color: #00bfff;">•</span>
+            <span class="task-text" contenteditable="false" style="flex:1;">${task.text}</span>
+            <div style="display: flex; gap: 8px;">
+                <button class="copy-btn" onclick="copyTask(${task.id})" title="Copiar tarea">📋</button>
+                <button class="delete-btn" onclick="removeTask(${task.id})">✕</button>
+            </div>
+        `;
+        // Permitir edición al hacer hover y click
+        const taskText = li.querySelector('.task-text');
+        li.addEventListener('mouseenter', () => {
+            taskText.style.cursor = 'pointer';
+        });
+        taskText.addEventListener('click', () => {
+            taskText.contentEditable = 'true';
+            taskText.focus();
+        });
+        taskText.addEventListener('blur', () => {
+            taskText.contentEditable = 'false';
+            updateTaskText(task.id, taskText.textContent);
+        });
+        taskText.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                taskText.blur();
+            }
+        });
+        list.appendChild(li);
+    }
+
+    function saveTask(task) {
+        const tasks = JSON.parse(localStorage.getItem('myFullList') || '[]');
+        tasks.push(task);
+        localStorage.setItem('myFullList', JSON.stringify(tasks));
+    }
+
+    function loadTasks() {
+        const tasks = JSON.parse(localStorage.getItem('myFullList') || '[]');
+        tasks.forEach(renderTask);
+    }
+
+    function removeTask(id) {
+        // Eliminar del HTML
+        const element = document.querySelector(`[data-id="${id}"]`);
+        if (element) element.remove();
+
+        // Eliminar de LocalStorage
+        let tasks = JSON.parse(localStorage.getItem('myFullList') || '[]');
+        tasks = tasks.filter(t => t.id !== id);
+        localStorage.setItem('myFullList', JSON.stringify(tasks));
+
+    }
+
+    // Permitir "Enter" para agregar y guardar la tarea
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            addTask();
+        }
+    });
+
+    // Función para copiar tarea al portapapeles
+    function copyTask(id) {
+        const element = document.querySelector(`[data-id="${id}"] .task-text`);
+        if (element) {
+            const text = element.textContent;
+            navigator.clipboard.writeText(text)
+                .then(() => {
+                    element.style.background = '#d4f7d4';
+                    setTimeout(() => { element.style.background = ''; }, 700);
+                })
+                .catch(() => {
+                    alert('No se pudo copiar la tarea');
+                });
+        }
+    }
+
+    // Función para limpiar todas las tareas
+        // Actualizar texto de tarea editada
+        function updateTaskText(id, newText) {
+            let tasks = JSON.parse(localStorage.getItem('myFullList') || '[]');
+            tasks = tasks.map(t => t.id === id ? { ...t, text: newText.trim() } : t);
+            localStorage.setItem('myFullList', JSON.stringify(tasks));
+        }
+    function clearTasks() {
+        if (confirm('¿Seguro que quieres borrar TODAS las tareas?')) {
+            localStorage.removeItem('myFullList');
+            list.innerHTML = '';
+        }
+    }
+</script>
+
+</body>
+</html>
